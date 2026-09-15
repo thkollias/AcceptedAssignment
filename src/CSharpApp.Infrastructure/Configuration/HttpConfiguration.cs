@@ -1,3 +1,4 @@
+using CSharpApp.Application.Categories;
 using Microsoft.Extensions.Options;
 using Polly;
 namespace CSharpApp.Infrastructure.Configuration;
@@ -15,6 +16,26 @@ public static class HttpConfiguration
 
         services
             .AddHttpClient<IProductsService, ProductsService>(
+                (serviceProvider, client) =>
+                {
+                    var settings = serviceProvider
+                        .GetRequiredService<IOptions<RestApiSettings>>()
+                        .Value;
+
+                    client.BaseAddress = new Uri(settings.BaseUrl);
+                })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(settings.LifeTime))
+            .AddStandardResilienceHandler(options =>
+            {
+                options.Retry.MaxRetryAttempts = settings.RetryCount;
+
+                options.Retry.Delay = TimeSpan.FromMilliseconds(settings.SleepDuration);
+
+                options.Retry.BackoffType = DelayBackoffType.Constant;
+            });
+
+        services
+            .AddHttpClient<ICategoriesService, CategoriesService>(
                 (serviceProvider, client) =>
                 {
                     var settings = serviceProvider

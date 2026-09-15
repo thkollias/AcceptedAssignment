@@ -1,4 +1,6 @@
+using CSharpApp.Core.Dtos.Category;
 using CSharpApp.Core.Dtos.Product;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +38,7 @@ var versionedEndpointRouteBuilder = app.NewVersionedApi();
 versionedEndpointRouteBuilder
     .MapGet(
         "api/v{version:apiVersion}/getproducts", 
-        async (IProductsService productsService) =>
+        async ([FromServices] IProductsService productsService) =>
         {
             var products = await productsService.GetAll();
             return products;
@@ -47,7 +49,7 @@ versionedEndpointRouteBuilder
 versionedEndpointRouteBuilder
     .MapGet(
         "api/v{version:apiVersion}/getproduct/{id}", 
-        async (IProductsService productsService, long id) =>
+        async ([FromServices] IProductsService productsService, int id) =>
         {
             var products = await productsService.GetById(id);
             return products;
@@ -58,12 +60,45 @@ versionedEndpointRouteBuilder
 versionedEndpointRouteBuilder
     .MapPost(
         "api/v{version:apiVersion}/createproduct",
-        async (IProductsService productsService, ProductCreation product) =>
+        async ([FromServices] IProductsService productsService, [FromBody] ProductCreation product) =>
         {
             var result = await productsService.Create(product);
             return Results.Ok(result);
         })
     .WithName("CreateProduct")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder
+    .MapGet(
+        "api/v{version:apiVersion}/getcategories",
+        async ([FromServices] ICategoriesService categoriesService) =>
+        {
+            var categories = await categoriesService.GetAll();
+            return categories;
+        })
+    .WithName("GetCategories")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder
+    .MapGet(
+        "api/v{version:apiVersion}/getcategory/{id}",
+        async ([FromServices] ICategoriesService categoriesService, int id) =>
+        {
+            var category = await categoriesService.GetById(id);
+            return category;
+        })
+    .WithName("GetCategory")
+    .HasApiVersion(1.0);
+
+versionedEndpointRouteBuilder
+    .MapGet(
+        "api/v{version:apiVersion}/createcategory",
+        async ([FromServices] ICategoriesService categoriesService, [FromBody] CategoryCreation category) =>
+        {
+            var result = await categoriesService.Create(category);
+            return Results.Ok(result);
+        })
+    .WithName("CreateCategory")
     .HasApiVersion(1.0);
 
 app.Run();

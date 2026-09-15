@@ -24,7 +24,7 @@ public class ProductsService : IProductsService
         return products ?? [];
     }
 
-    public async Task<ProductDetails?> GetById(long id)
+    public async Task<ProductDetails?> GetById(int id)
     {
         var product = await _httpClient
             .GetFromJsonAsync<ProductDetails>($"products/{id}");

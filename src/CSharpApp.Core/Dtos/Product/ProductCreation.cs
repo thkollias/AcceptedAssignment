@@ -12,7 +12,7 @@ public sealed class ProductCreation
     public string? Description { get; set; }
 
     [JsonPropertyName("categoryId")]
-    public long? CategoryId { get; set; }
+    public int? CategoryId { get; set; }
 
     [JsonPropertyName("images")]
     public List<string> Images { get; set; } = [];

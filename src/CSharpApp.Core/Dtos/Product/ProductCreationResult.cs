@@ -4,6 +4,9 @@ namespace CSharpApp.Core.Dtos.Product;
 
 public class ProductCreationResult
 {
+    [JsonPropertyName("id")]
+    public int? Id { get; set; }
+
     [JsonPropertyName("title")]
     public string? Title { get; set; }
 
@@ -22,9 +25,6 @@ public class ProductCreationResult
     [JsonPropertyName("category")]
     public CategoryDetails? Category { get; set; }
     
-    [JsonPropertyName("id")]
-    public long? Id { get; set; }
-
     [JsonPropertyName("creationAt")]
     public DateTime? CreationAt { get; set; }
 
